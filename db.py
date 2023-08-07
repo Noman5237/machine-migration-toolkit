@@ -39,15 +39,14 @@ def setup_migrations_db(cursor):
     cursor.execute("""
         create table if not exists migration_history
         (
+            id          integer primary key autoincrement,
             migration_timestamp varchar(255) not null,
             project_name varchar(255) not null,
             file_name    varchar(255) not null,
             migration_name varchar(255) not null,
             migration_hash varchar(255) not null,
-            rollback_hash  varchar(255),
-            migration_status varchar(255) not null,
-            
-            primary key (migration_timestamp)
+            rollback_hash  varchar(255) not null,
+            migration_status varchar(255) not null
         );
     """)
 

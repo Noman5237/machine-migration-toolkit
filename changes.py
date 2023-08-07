@@ -76,19 +76,25 @@ def apply_changes(detected_migrations, migrations_cursor, migrations_conn):
             migration_updates = file["migration_updates"]
             if len(migration_updates['deleted']) > 0:
                 print(f"Deleting migrations from {project_name}/{file_name}")
-                bash.delete_migrations(file, migration_updates['deleted'])
-                db.delete_migrations(project_name, file_name, file, migration_updates['deleted'], migrations_cursor,
-                                     migrations_conn)
+                for migration in migration_updates['deleted']:
+                    bash.delete_migrations(file, [migration])
+                    db.delete_migrations(project_name, file_name, file, [migration], migrations_cursor,
+                                         migrations_conn)
             if len(migration_updates['changed']) > 0:
                 print(f"Updating migrations from {project_name}/{file_name}")
                 bash.delete_migrations(file, migration_updates['changed'])
-                bash.add_migrations(file, migration_updates['changed'])
-                db.delete_migrations(project_name, file_name, file, migration_updates['changed'], migrations_cursor,
+                bash.add_migrations(file, sorted(migration_updates['changed'], key=lambda x: x['name']))
+                db.delete_migrations(project_name, file_name, file,
+                                     migration_updates['changed'],
+                                     migrations_cursor,
                                      migrations_conn)
-                db.add_migrations(project_name, file_name, file, migration_updates['changed'], migrations_cursor,
+                db.add_migrations(project_name, file_name, file,
+                                  sorted(migration_updates['changed'], key=lambda x: x['name']),
+                                  migrations_cursor,
                                   migrations_conn)
             if len(migration_updates['new']) > 0:
                 print(f"Adding migrations from {project_name}/{file_name}")
-                bash.add_migrations(file, migration_updates['new'])
-                db.add_migrations(project_name, file_name, file, migration_updates['new'], migrations_cursor,
-                                  migrations_conn)
+                for migration in migration_updates['new']:
+                    bash.add_migrations(file, [migration])
+                    db.add_migrations(project_name, file_name, file, [migration], migrations_cursor,
+                                      migrations_conn)

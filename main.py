@@ -22,6 +22,13 @@ def main():
             migration_updates = changes.detect_changes(parsed_file, parsed_migrations, committed_file,
                                                        committed_migrations)
 
+            migration_updates = {
+                "new": sorted(migration_updates["new"], key=lambda x: x["name"]),
+                "deleted": sorted(migration_updates["deleted"], key=lambda x: x["name"], reverse=True),
+                "changed": sorted(migration_updates["changed"], key=lambda x: x["name"], reverse=True),
+                "unchanged": sorted(migration_updates["unchanged"], key=lambda x: x["name"]),
+            }
+
             detected_migrations_projects[file] = {
                 "parsed_file": parsed_file,
                 "committed_file": committed_file,
