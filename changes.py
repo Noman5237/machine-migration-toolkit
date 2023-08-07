@@ -35,7 +35,8 @@ def detect_changes(parsed_file, parsed_migrations, committed_file, committed_mig
         if parsed_migration["hash"] != committed_migration["hash"] \
                 or parsed_migration["rollback_hash"] != committed_migration["rollback_hash"]:
             migrations["changed"].append(parsed_migration)
-        elif parsed_file["hash"] == committed_file["hash"]:
+        elif parsed_migration["hash"] == committed_migration["hash"] \
+                and parsed_migration["rollback_hash"] == committed_migration["rollback_hash"]:
             migrations["unchanged"].append(parsed_migration)
 
     for migration_name in new:
@@ -44,7 +45,7 @@ def detect_changes(parsed_file, parsed_migrations, committed_file, committed_mig
     for migration_name in deleted:
         migrations["deleted"].append(committed_migration_map[migration_name])
 
-    if len(common) == len(parsed_migration_names) and len(common) == len(committed_migration_names):
+    if len(migrations["unchanged"]) == len(parsed_migration_names) and len(migrations["unchanged"]) == len(committed_migration_names):
         if parsed_file["hash"] != committed_file["hash"]:
             migrations["changed"] = parsed_migrations
 

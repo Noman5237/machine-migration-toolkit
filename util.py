@@ -3,6 +3,7 @@ from os.path import expanduser
 import re
 import hashlib
 from rich import print as print
+import yaml
 
 home = expanduser("~")
 default_migrations_dir = f"{home}/.migrations"
@@ -78,3 +79,10 @@ def parse_migrations_from_file(file_content):
         })
 
     return migrations
+
+
+def get_project_info(project_dir):
+    project_config_path = f"{project_dir}/project.yaml"
+    with open(project_config_path, 'r') as file:
+        content = file.read()
+        return yaml.safe_load(content)

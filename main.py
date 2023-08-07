@@ -11,11 +11,14 @@ def main():
 
     detected_migrations = {}
     for project_dir in migration_projects:
-        project_name = project_dir.split('/')[-1]
+        project_info = util.get_project_info(project_dir)
+        project_name = project_info["name"]
 
         detected_migrations_projects = {}
 
-        for file in sorted(util.list_migrations_files(project_dir) + db.list_migration_files(project_name, migrations_cursor)):
+        all_files = sorted(list(
+            set(util.list_migrations_files(project_dir) + db.list_migration_files(project_name, migrations_cursor))))
+        for file in all_files:
             parsed_file, parsed_migrations = util.get_migrations_by_file_path(os.path.join(project_dir, file))
             committed_file, committed_migrations = db.get_migrations_by_file_name(project_name, file, migrations_cursor)
 
