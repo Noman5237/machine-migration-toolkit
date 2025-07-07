@@ -1,6 +1,7 @@
 import os
 import subprocess
 import util
+from rich.syntax import Syntax
 from rich import print as print
 
 current_directory = os.path.dirname(__file__)
